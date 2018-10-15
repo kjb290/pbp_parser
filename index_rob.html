@@ -1,0 +1,1135 @@
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="uft8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>My filtered data</title>
+    <!--<link rel="stylesheet" type="text/css" href="data/dcjs_example/dc.css"/>-->
+
+    <style>
+
+
+        #arl2017list table, .dc-data-grid {clear:both;}
+        .dc-table-label {background: #F5F5F5; font-weight:bold; }
+        .x line {stroke:none;}
+
+        body {font-family: arial, helvetica, sans-serif;}
+
+        .dc-data-grid, .dc-grid-group {clear:both}
+        .dc-data-count {clear:both;}
+        .dc-data-count2 {clear:both;}
+        .dc-grid-group {
+          background-color: #F5F5F5;
+          border: 1px solid #E3E3E3;
+        border-radius: 4px;
+
+        box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05) inset;
+        margin-bottom: 20px;
+        min-height: 20px;
+        padding: 10px;
+        }
+
+        .dc-grid-item {
+        float:left;
+        margin:0 10px 10px 0;
+        padding:5px;
+        width:425px;
+              background-color: #F8F8F8;
+              border-color: #E7E7E7;
+              border-radius: 4px;
+              text-align:center;
+              box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05) inset;
+        height:600px;
+        overflow:auto;
+
+        }
+        .dc-grid-item img {width:120px;height:150px}
+        .dc-grid-top h1 {font-size:22px;}
+        .dc-grid-top h2 {font-size:16px;font-weight:600;}
+        .dc-grid-top h3 {font-size:14px;}
+        .dc-chart g.row text {
+                fill: black;
+            }
+
+        div.tooltip {
+            position: relative;
+            text-align: center;
+            width: 120px;
+            height: 28px;
+            padding: 2px;
+            padding-top: 6px;
+            font: 12px sans-serif;
+            background: lightsteelblue;
+            border: 0px;
+            border-radius: 8px;
+            pointer-events: none;
+
+        }
+        div.tooltip_long {
+            position: relative;
+            text-align: center;
+            width: 160px;
+            height: 28px;
+            padding: 2px;
+            padding-top: 6px;
+            font: 12px sans-serif;
+            background: lightsteelblue;
+            border: 0px;
+            border-radius: 8px;
+            pointer-events: none;
+
+        }
+        #exTab1 .tab-content {
+          color : white;
+          background-color: #428bca;
+          padding : 5px 15px;
+        }
+        #exTab1 .nav-pills > li > a {
+              border-radius: 0;
+            }
+        .select_toggle{
+            opacity:.5;
+        }
+
+        div.training g.row text,
+        div.Quarter g.row text,
+        div.down g.row text,
+        div.distance g.row text,
+        div.Diff_Score g.row text,
+        div.Play_Type g.row text,
+        div.Poss g.row text,
+        div.Passer g.row text,
+        div.Targeted g.row text,
+        div.Carrier g.row text,
+        div.Opponent g.row text,
+        div.yardDimension g.row text,
+
+        div.Season g.row text{
+            fill: black;
+            font-size:10pt;
+        }
+
+        console.log(div.yardDimension g.row text)
+
+        .row {
+        padding-left:25px;
+            padding-right:50px;
+            padding-top:25px;
+        }
+        .natl_cluster {
+            width: 30px;
+            height: 30px;
+            margin-left: 5px;
+            padding-top: 7px;
+            text-align: center;
+            border-radius: 50%;
+            font: 16px "Helvetica Neue", Arial, Helvetica, sans-serif;
+            font-weight:bold;
+
+            background-image:
+            radial-gradient(
+              #FD8D08,
+              #FD8D08
+            );
+		}
+
+        .reg_cluster {
+            width: 30px;
+            height: 30px;
+            margin-left: 5px;
+            padding-top: 7px;
+            text-align: center;
+            border-radius: 50%;
+            font: 16px "Helvetica Neue", Arial, Helvetica, sans-serif;
+            font-weight:bold;
+            background-image:
+            radial-gradient(
+              #C89BFF,
+              #C89BFF
+            );
+		}
+
+        .pref_cluster {
+            width: 30px;
+            height: 30px;
+            margin-left: 5px;
+            padding-top: 7px;
+            text-align: center;
+            border-radius: 50%;
+            font: 16px "Helvetica Neue", Arial, Helvetica, sans-serif;
+            font-weight:bold;
+
+            background-image:
+            radial-gradient(
+              #97EC7D,
+              #97EC7D
+            );
+		}
+
+        .center_cluster {
+            width: 30px;
+            height: 30px;
+            margin-left: 5px;
+            padding-top: 7px;
+            text-align: center;
+            border-radius: 50%;
+            font: 16px "Helvetica Neue", Arial, Helvetica, sans-serif;
+            font-weight:bold;
+            background-image:
+            radial-gradient(
+              #6B98FF,
+              #6B98FF
+            );
+		}
+
+
+    </style>
+
+</head>
+<body>
+    <!--<link href="data/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <script type="text/javascript" src="data/dcjs/d3_3_5_17.js"></script>
+    <script type="text/javascript" src="data/dcjs/crossfilter2_1.4.0-alpha.6.js"></script>
+    <script type="text/javascript" src="data/dcjs_example/dc.js"></script>
+    <script type="text/javascript" src="data/dcjs_example/data-grid.js"></script>
+    <script type="text/javascript" src="data/dcjs_example/underscore-min.js"></script>
+
+    <script src="data/dcjs_example/jquery.min.js"></script>
+    <script src="data/dcjs_example/jquery.lazyload.js"></script>-->
+    <script src="data/dcjs_example/jquery_1.11.min.js"></script>
+
+    <script type="text/javascript" src="data/dc.js-2.1.10/web/js/d3.js"></script>
+    <script type="text/javascript" src="data/dc.js-2.1.10/web/js/crossfilter.js"></script>
+    <script type="text/javascript" src="data/dc.js-2.1.10/web/js/dc.js"></script>
+    <script type="text/javascript" src= "data/dc.js-2.1.10/src/data-grid.js"></script>
+    <script type="text/javascript" src="data/dcjs_example/underscore-min.js"></script>
+
+    <script type="text/javascript" src="data/dc_leaflet/web/js/leaflet.js"></script>
+    <script type="text/javascript" src="data/dc_leaflet/web/js/polyline.encoded.js"></script>
+
+    <script type="text/javascript" src= "data/dc_leaflet/web/js/colorbrewer.js"></script>
+    <script type="text/javascript" src="data/dc_leaflet/web/js/leaflet.markercluster.js"></script>
+    <script type="text/javascript" src="data/dc_leaflet/web/js/dc.leaflet.js"></script>
+
+
+    <script src="leaflet-routing-machine-3.2.7/leaflet-routing-machine-3.2.7/dist/leaflet-routing-machine.js"></script>
+    <link rel="stylesheet" href="leaflet-routing-machine-3.2.7/leaflet-routing-machine-3.2.7/dist/leaflet-routing-machine.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css" />
+
+
+    <link type="text/css" href= "data/dc.js-2.1.10/web/css/dc.css" rel="stylesheet"/>
+    <link type="text/css" href= "data/bootstrap_4.0/css/bootstrap_4.0.0-alpha.3.css" rel="stylesheet">
+
+    <link type="text/css" href= "data/dc_leaflet/web/css/leaflet.css" rel="stylesheet"/>
+	<link type="text/css" href= "data/dc_leaflet/web/css/MarkerCluster.Default.css" rel="stylesheet"/>
+	<link type="text/css" href= "data/dc_leaflet/web/css/MarkerCluster.css" rel="stylesheet"/>
+	<link type="text/css" href= "data/dc_leaflet/web/css/leaflet-legend.css" rel="stylesheet"/>
+
+    <script>
+
+var yardsGrouping;
+var ccc;
+        function grid (selector,data) {
+          var ndx = crossfilter(data),
+              all = ndx.groupAll();
+
+              //nnn = all.reduceCount().value()
+          console.log(data);
+
+
+          function choose_bin(group, key) {
+            return {
+                value: function() {
+                return group.all().filter(kv => kv.key === key)[0].value;
+                }
+            }
+          }
+          function test_search(dim, q) {
+              var pattern = '.*q.*';
+              pattern = pattern.replace('q',q);
+              var re = new RegExp(pattern,"i");
+
+              if (q != '') {
+                  dim.filter(function (d) {
+                      return 0 == d.search(re);
+
+                  });
+              } else {
+                  dim.filterAll();
+              }
+              dc.redrawAll()
+          }
+          function roundMonths(date) {
+            date.setDate(1);
+            return date;}
+
+          function remove_empty_bins(source_group) {
+                return {
+                    all:function () {
+                        return source_group.top(15).filter(function(d) {
+                            return d.value != 0;
+                        });
+                    }
+                };
+            }
+
+            function remove_empty_bins_50(source_group) {
+                return {
+                    all:function () {
+                        return source_group.top(50).filter(function(d) {
+                            return d.value != 0;
+                        });
+                    }
+                };
+            }
+
+           function remove_empty_text_bins(source_group) {
+                return {
+                    all:function () {
+                        return source_group.all().filter(function(d) {
+                            return d.key != "";
+                        });
+                    }
+                };
+            }
+            function remove_empty_bins_all(source_group) {
+                return {
+                    all:function () {
+                        return source_group.all().filter(function(d) {
+                            return d.value != 0;
+                        });
+                    }
+                };
+            }
+            function rotateBarChartLabels(classvar) {
+            d3.selectAll(selector + ' .'+classvar+'  g .axis.x text')
+                .style("text-anchor", "end")
+                .attr("transform", function (d) {
+                    return "rotate(-55, -4, 9) ";
+                });
+        }
+        function toTitleCase(str)
+{
+    return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+}
+
+
+        //-----------------------------------------------------
+
+
+//------ STYLE -------------
+        var pixels_per_row = 50;
+        var Quarter_set = [];
+        var Quarter_dict = [];
+
+        //----------------------------------------
+          data.forEach(function(d,i){if (typeof d.training !="undefined") d.training = d.training.split(',');} )
+          var bar_training =dc.rowChart(selector + " .training");
+
+          var training = ndx.dimension(function(d) {
+              if (typeof d.training == "undefined") return "";
+              return d.training;
+              },true);
+          var trainingGroup   = training.group().reduceSum(function(d) { return 1; });
+
+          //----------------------------------------------------
+            var bar_Quarter =dc.rowChart(selector + " .Quarter");
+
+          var Quarter = ndx.dimension(function(d) {
+              if (typeof d.Quarter == "undefined") return "";
+              return d.Quarter;
+              },false);
+          var QuarterGroup   = Quarter.group().reduceSum(function(d) { return 1; });
+
+          var QuarterRingChart   = dc.pieChart("#chart-ring-qua");
+          //-----------------------------------------------------------
+            var bar_down =dc.rowChart(selector + " .down");
+
+          var down = ndx.dimension(function(d) {
+              if (typeof d.down == "undefined") return "";
+              return d.down;
+              },false);
+          var downGroup   = down.group().reduceSum(function(d) { return 1; });
+
+          //-----------------------------------------------------------
+            var bar_distance =dc.rowChart(selector + " .distance");
+
+          var distance = ndx.dimension(function(d) {
+              if (typeof d.distance == "undefined") return "";
+              return d.distance;
+              },false);
+          var distanceGroup   = distance.group().reduceSum(function(d) { return 1; });
+          //------------------------------------------------------
+
+          //-----------------------------------------------------------
+            var bar_Diff_Score =dc.rowChart(selector + " .Diff_Score");
+
+          var Diff_Score = ndx.dimension(function(d) {
+              if (typeof d.Diff_Score == "undefined") return "";
+              return d.Diff_Score;
+              },false);
+          var Diff_ScoreGroup   = Diff_Score.group().reduceSum(function(d) { return 1; });
+          //------------------------------------------------------
+
+          //-----------------------------------------------------------
+            var bar_Play_Type =dc.rowChart(selector + " .Play_Type");
+
+          var Play_Type = ndx.dimension(function(d) {
+              if (typeof d.Play_Type == "undefined") return "";
+              return d.Play_Type;
+              },false);
+          var Play_TypeGroup   = Play_Type.group().reduceSum(function(d) { return 1; });
+          //------------------------------------------------------
+          //-----------------------------------------------------------
+            var bar_Passer =dc.rowChart(selector + " .Passer");
+
+          var Passer = ndx.dimension(function(d) {
+              if (typeof d.Passer == "undefined") return "";
+              return d.Passer;
+              },false);
+          var PasserGroup   = Passer.group().reduceSum(function(d) { return 1; });
+          //------------------------------------------------------
+          //-----------------------------------------------------------
+            var bar_Targeted =dc.rowChart(selector + " .Targeted");
+
+          var Targeted = ndx.dimension(function(d) {
+              if (typeof d.Targeted == "undefined") return "";
+              return d.Targeted;
+              },false);
+          var TargetedGroup   = Targeted.group().reduceSum(function(d) { return 1; });
+          //------------------------------------------------------
+          //-----------------------------------------------------------
+            var bar_Carrier =dc.rowChart(selector + " .Carrier");
+
+          var Carrier = ndx.dimension(function(d) {
+              if (typeof d.Carrier == "undefined") return "";
+              return d.Carrier;
+              },false);
+          var CarrierGroup   = Carrier.group().reduceSum(function(d) { return 1; });
+          //------------------------------------------------------
+
+          //-----------------------------------------------------------
+            var bar_Poss =dc.rowChart(selector + " .Poss");
+
+          var Poss = ndx.dimension(function(d) {
+              if (typeof d.Poss == "undefined") return "";
+              return d.Poss;
+              },false);
+          var PossGroup   = Poss.group().reduceSum(function(d) { return 1; });
+          //------------------------------------------------------
+//----------------------------------------------------
+          var bar_Opponent =dc.rowChart(selector + " .Opponent");
+
+          var Opponent = ndx.dimension(function(d) {
+              if (typeof d.Opponent == "undefined") return "";
+              return d.Opponent;
+              },false);
+          var OpponentGroup   = Opponent.group().reduceSum(function(d) { return 1; });
+
+          var OpponentRingChart   = dc.pieChart("#chart-ring-opp");
+
+//----------------------------------------
+          //----------------------------------------
+          var phone = ndx.dimension(function(d) {
+              if (typeof d.phone == "undefined") return "";
+              return d.phone;
+              });
+          //----------------------------------------
+          var fax = ndx.dimension(function(d) {
+              if (typeof d.fax == "undefined") return "";
+              return d.fax;
+              });
+          //----------------------------------------
+          var computer = ndx.dimension(function(d) {
+              if (typeof d.computer == "undefined") return "";
+              return d.computer;
+              });
+          //----------------------------------------
+          var internet = ndx.dimension(function(d) {
+              if (typeof d.internet == "undefined") return "";
+              return d.internet;
+              });
+          //----------------------------------------
+          var tdr_palu = ndx.dimension(function(d) {
+              if (typeof d.tdr_palu == "undefined") return "";
+              return d.tdr_palu;
+              });
+          //----------------------------------------
+          var tdr_hiv = ndx.dimension(function(d) {
+              if (typeof d.tdr_hiv == "undefined") return "";
+              return d.tdr_hiv;
+              });
+          //----------------------------------------
+          var widal = ndx.dimension(function(d) {
+              if (typeof d.widal == "undefined") return "";
+              return d.widal;
+              });
+          //----------------------------------------
+          var hb_sahli = ndx.dimension(function(d) {
+              if (typeof d.hb_sahli == "undefined") return "";
+              return d.hb_sahli;
+              });
+
+          //----------------------------------------
+          // calculations
+          var yardChart = dc.barChart("#yard-chart");
+          var bar_Yards =dc.rowChart(selector + " .yardDimension");
+
+          var yardsDimension = ndx.dimension(function(d) { return d.Play_Type; });
+
+          yardsGrouping = yardsDimension.group().reduce(
+            /* callback for when data is added to the current filter results */
+            function (p, v) {
+            ++p.count;
+            p.totalYds += parseInt(v.Yards);
+
+            return p;
+            },
+            /* callback for when data is removed from the current filter results */
+            function (p, v) {
+                --p.count;
+                p.totalYds -= parseInt(v.Yards);
+                ccc = v.Yards;
+                return p;
+            },
+            /* initialize p */
+            function () {
+                return {
+                    totalYds: 0,
+                };
+        }
+    );
+//          var yearlyPerformanceGroup = yearlyDimension.group().reduce(
+//
+//                    function (p, v) {
+//                        ++p.count;
+//                        p.absGain += +v.close - +v.open;
+//                        p.fluctuation += Math.abs(+v.close - +v.open);
+//                        p.sumIndex += (+v.open + +v.close) / 2;
+//                        p.avgIndex = p.sumIndex / p.count;
+//                        p.percentageGain = (p.absGain / p.avgIndex) * 100;
+//                        p.fluctuationPercentage = (p.fluctuation / p.avgIndex) * 100;
+//                        return p;
+//                    },
+//                    //remove
+//                    function (p, v) {
+//                        --p.count;
+//                        p.absGain -= +v.close - +v.open;
+//                        p.fluctuation -= Math.abs(+v.close - +v.open);
+//                        p.sumIndex -= (+v.open + +v.close) / 2;
+//                        p.avgIndex = p.sumIndex / p.count;
+//                        p.percentageGain = (p.absGain / p.avgIndex) * 100;
+//                        p.fluctuationPercentage = (p.fluctuation / p.avgIndex) * 100;
+//                        return p;
+//                    },
+//                    //init
+//                    function () {
+//                        return {count: 0, absGain: 0, fluctuation: 0, fluctuationPercentage: 0, sumIndex: 0, avgIndex: 0, percentageGain: 0};
+//                    }
+//            );
+
+          var electricity = ndx.dimension(function(d) {
+              if (typeof d.electricity_existence == "undefined") return "";
+              return d.electricity_existence;
+              });
+
+
+
+          d3.selectAll(".checkbox").on("change",update);
+        update();
+
+
+        function update(){
+              cb = d3.select(this);
+              checkboxes(cb,
+                  {
+                  'Phone':phone,
+                  'Fax':fax,
+                  'Computer':computer,
+                  'Internet':internet,
+                   'Electricity':electricity,
+                  'TDR_Palu':tdr_palu,
+                  'TDR_HIV':tdr_hiv,
+                  'Widal':widal,
+                  'HB_Sahli':hb_sahli
+                  }
+                  )
+        }
+        function checkboxes(selector,checklist){
+            Object.keys(checklist).forEach(function(val,ind){
+            if(selector.property("checked")){
+                if (selector.property("value")==val) {
+                    checklist[val].filter(function(d){if (d==1){return d}});
+
+
+                    facilityGroup.all().forEach(function(d){
+                if(d.value!=0){
+                    if (Object.keys(national_layers).indexOf(d.inst)!=-1) {
+                        if (map.hasLayer(national_layers[d.inst]) == false) {
+                            natl_markers.addLayer(national_layers[d.inst])
+                        }
+                    }
+                    if (Object.keys(regional_layers).indexOf(d.inst)!=-1) {
+                        if (map.hasLayer(regional_layers[d.inst]) == false) {
+                            reg_markers.addLayer(regional_layers[d.inst])
+                        }
+                    }
+                    if (Object.keys(down_layers).indexOf(d.inst)!=-1) {
+                        if (map.hasLayer(down_layers[d.inst]) == false) {
+                            pref_markers.addLayer(down_layers[d.inst])
+                        }
+                    }
+                    if (Object.keys(center_layers).indexOf(d.inst)!=-1) {
+                        if (map.hasLayer(center_layers[d.inst]) == false) {
+                            cent_markers.addLayer(center_layers[d.inst])
+                        }
+                    }
+                }
+                if(d.value==0){
+                    if (Object.keys(national_layers).indexOf(d.inst)!=-1) {
+                        natl_markers.removeLayer(national_layers[d.inst])
+                    }
+                    if (Object.keys(regional_layers).indexOf(d.inst)!=-1) {
+                        reg_markers.removeLayer(regional_layers[d.inst])
+                    }
+                    if (Object.keys(down_layers).indexOf(d.inst)!=-1) {
+                        pref_markers.removeLayer(down_layers[d.inst])
+                    }
+                    if (Object.keys(center_layers).indexOf(d.inst)!=-1) {
+                        cent_markers.removeLayer(center_layers[d.inst])
+                    }
+                }})
+
+                    dc.redrawAll()
+                }
+              }
+                if(selector.property("checked")==false){
+                    if (selector.property("value")==val) {
+                        //console.log('Uncheck');
+                        checklist[val].filter(null);
+
+                        facilityGroup.all().forEach(function(d){
+                if(d.value!=0){
+                    if (Object.keys(national_layers).indexOf(d.inst)!=-1) {
+                        if (map.hasLayer(national_layers[d.inst]) == false) {
+                            natl_markers.addLayer(national_layers[d.inst])
+                        }
+                    }
+                    if (Object.keys(regional_layers).indexOf(d.inst)!=-1) {
+                        if (map.hasLayer(regional_layers[d.inst]) == false) {
+                            reg_markers.addLayer(regional_layers[d.inst])
+                        }
+                    }
+                    if (Object.keys(down_layers).indexOf(d.inst)!=-1) {
+                        if (map.hasLayer(down_layers[d.inst]) == false) {
+                            pref_markers.addLayer(down_layers[d.inst])
+                        }
+                    }
+                    if (Object.keys(center_layers).indexOf(d.inst)!=-1) {
+                        if (map.hasLayer(center_layers[d.inst]) == false) {
+                            cent_markers.addLayer(center_layers[d.inst])
+                        }
+                    }
+                }
+                if(d.value==0){
+                    if (Object.keys(national_layers).indexOf(d.inst)!=-1) {
+                        natl_markers.removeLayer(national_layers[d.inst])
+                    }
+                    if (Object.keys(regional_layers).indexOf(d.inst)!=-1) {
+                        reg_markers.removeLayer(regional_layers[d.inst])
+                    }
+                    if (Object.keys(down_layers).indexOf(d.inst)!=-1) {
+                        pref_markers.removeLayer(down_layers[d.inst])
+                    }
+                    if (Object.keys(center_layers).indexOf(d.inst)!=-1) {
+                        cent_markers.removeLayer(center_layers[d.inst])
+                    }
+                }})
+
+                        dc.redrawAll()
+                    }
+                }
+            })
+        }
+
+        bar_Quarter
+            .width($('div.Quarter').width())
+            .height(QuarterGroup.all().length*pixels_per_row)
+            .gap(1)
+            .margins({top: 0, right: 0, bottom: 50, left: 10})
+            .x(d3.scale.ordinal())
+            .labelOffsetX(5)
+            .label(function (d) {
+                        return '(' + d.value + ')  ' + toTitleCase(d.key)
+                    })
+            .ordering(function(kv) { return -kv.value; })
+            .elasticX(true)
+            .dimension(Quarter)
+            .group(QuarterGroup);
+
+        QuarterRingChart
+            .dimension(Quarter)
+            .group(QuarterGroup)
+            .innerRadius(40)
+            .controlsUseVisibility(true);
+
+        bar_down
+            .width($('div.down').width())
+            .height(downGroup.all().length*pixels_per_row)
+            .gap(1)
+            .margins({top: 0, right: 0, bottom: 50, left: 10})
+            .x(d3.scale.ordinal())
+            .labelOffsetX(5)
+            .label(function (d) {
+                        return '(' + d.value + ')  ' + toTitleCase(d.key)
+                    })
+            .ordering(function(kv) { return -kv.value; })
+            .elasticX(true)
+            .dimension(down)
+            .group(downGroup);
+
+        bar_distance
+            .width($('div.distance').width())
+            .height(distanceGroup.all().length*pixels_per_row)
+            .gap(1)
+            .margins({top: 0, right: 0, bottom: 50, left: 10})
+            .x(d3.scale.ordinal())
+            .labelOffsetX(5)
+            .label(function (d) {
+                        return '(' + d.value + ')  ' + toTitleCase(d.key)
+                    })
+            .ordering(function(kv) { return -kv.value; })
+            .elasticX(true)
+            .dimension(distance)
+            .group(distanceGroup);
+
+        bar_Diff_Score
+            .width($('div.Diff_Score').width())
+            .height(Diff_ScoreGroup.all().length*pixels_per_row)
+            .gap(1)
+            .margins({top: 0, right: 0, bottom: 50, left: 10})
+            .x(d3.scale.ordinal())
+            .labelOffsetX(5)
+            .label(function (d) {
+                        return '(' + d.value + ')  ' + toTitleCase(d.key)
+                    })
+            .ordering(function(kv) { return -kv.value; })
+            .elasticX(true)
+            .dimension(Diff_Score)
+            .group(Diff_ScoreGroup);
+
+        bar_Play_Type
+            .width($('div.Play_Type').width())
+            .height(Play_TypeGroup.all().length*pixels_per_row)
+            .gap(1)
+            .margins({top: 0, right: 0, bottom: 50, left: 10})
+            .x(d3.scale.ordinal())
+            .labelOffsetX(5)
+            .label(function (d) {
+                        return '(' + d.value + ')  ' + toTitleCase(d.key)
+                    })
+            .ordering(function(kv) { return -kv.value; })
+            .elasticX(true)
+            .dimension(Play_Type)
+            .group(Play_TypeGroup);
+
+        bar_Poss
+            .width($('div.Poss').width())
+            .height(125)
+            .gap(1)
+            .margins({top: 0, right: 0, bottom: 50, left: 10})
+            .x(d3.scale.ordinal())
+            .labelOffsetX(5)
+            .label(function (d) {
+                        return '(' + d.value + ')  ' + toTitleCase(d.key)
+                    })
+            .ordering(function(kv) { return -kv.value; })
+            .elasticX(true)
+            .dimension(Poss)
+            .group(PossGroup);
+
+        bar_Passer
+            .width($('div.Passer').width())
+            .height(PasserGroup.all().length*pixels_per_row)
+            .gap(1)
+            .margins({top: 0, right: 0, bottom: 50, left: 10})
+            .x(d3.scale.ordinal())
+            .labelOffsetX(5)
+            .label(function (d) {
+                        return '(' + d.value + ')  ' + toTitleCase(d.key)
+                    })
+            .ordering(function(kv) { return -kv.value; })
+            .elasticX(true)
+            .dimension(Passer)
+            .group(PasserGroup);
+
+        bar_Targeted
+            .width($('div.Targeted').width())
+            .height(TargetedGroup.all().length*pixels_per_row)
+            .gap(1)
+            .margins({top: 0, right: 0, bottom: 50, left: 10})
+            .x(d3.scale.ordinal())
+            .labelOffsetX(5)
+            .label(function (d) {
+                        return '(' + d.value + ')  ' + toTitleCase(d.key)
+                    })
+            .ordering(function(kv) { return -kv.value; })
+            .elasticX(true)
+            .dimension(Targeted)
+            .group(TargetedGroup);
+
+        bar_Carrier
+            .width($('div.Carrier').width())
+            .height(CarrierGroup.all().length*pixels_per_row)
+            .gap(1)
+            .margins({top: 0, right: 0, bottom: 50, left: 10})
+            .x(d3.scale.ordinal())
+            .labelOffsetX(5)
+            .label(function (d) {
+                        return '(' + d.value + ')  ' + toTitleCase(d.key)
+                    })
+            .ordering(function(kv) { return -kv.value; })
+            .elasticX(true)
+            .dimension(Carrier)
+            .group(CarrierGroup);
+
+
+
+        bar_Opponent
+            .width($('div.Opponent').width())
+            .height(OpponentGroup.all().length*pixels_per_row)
+            .gap(1)
+            .margins({top: 0, right: 0, bottom: 50, left: 10})
+            .x(d3.scale.ordinal())
+            .labelOffsetX(5)
+            .label(function (d) {
+                        return '(' + d.value + ')  ' + toTitleCase(d.key)
+                    })
+            .ordering(function(kv) { return -kv.value; })
+            .elasticX(true)
+            .dimension(Opponent)
+            .group(OpponentGroup);
+//            .width($('div.yardDimension').width())
+//            .height(yardsGrouping.all().length*pixels_per_row)
+
+        yardChart.width(420)
+            .height(180)
+            .margins({top: 10, right: 50, bottom: 30, left: 40})
+            .dimension(Passer)
+            .group(yardsGrouping)
+            .elasticY(true)
+            .centerBar(true)
+            .gap(1)
+            .round(dc.round.floor)
+            .x(d3.scale.linear().domain([-25, 25]))
+            .renderHorizontalGridLines(true)
+            .xAxis()
+            .tickFormat(function (v) {
+                return v + "%";
+            });
+
+        bar_Yards
+//            .width($('div.yardsDimension').width()*2)
+            .width(250)
+            .height(yardsGrouping.all().length*pixels_per_row)
+            .gap(1)
+            .margins({top: 0, right: 0, bottom: 50, left: 10})
+            .x(d3.scale.ordinal())
+            .labelOffsetX(5)
+            .label(function (d) {
+                        return '(' + d.value.totalYds + ')  ' + toTitleCase(d.key)
+                   })
+            .ordering(function(kv) { return -kv.value; })
+            .elasticX(true)
+            .dimension(yardsDimension)
+            .valueAccessor(function (p) {
+            return p.value.totalYds;})
+            .group(yardsGrouping);
+
+//            .valueAccessor(function (p) {
+//            return p.value.totalYds;})
+
+        OpponentRingChart
+            .dimension(Opponent)
+            .group(OpponentGroup)
+            .innerRadius(40)
+            .controlsUseVisibility(true);
+          //  .keyAccessor(function (d) {
+           //             return d.value.absGain;
+           //         })
+           //         .valueAccessor(function (p) {
+           //             return p.value.percentageGain;
+           //         })
+           //         .radiusValueAccessor(function (p) {
+           //             return p.value.fluctuationPercentage;
+           //         })
+         bar_training
+            .width($('div.training').width())
+            .height(trainingGroup.all().length*pixels_per_row)
+            .gap(1)
+            .margins({top: 0, right: 25, bottom: 50, left: 10})
+            .x(d3.scale.ordinal())
+            .labelOffsetX(5)
+            .label(function (d) {
+                        return '(' + d.value + ')  ' + toTitleCase(d.key)
+                    })
+            .ordering(function(kv) { return -kv.value; })
+            .elasticX(true)
+            .dimension(training)
+            .group(trainingGroup);
+
+
+
+
+         var bar_Season = dc.rowChart(selector +  " .Season")
+         var Season = ndx.dimension(function(d) {
+              if (typeof d.Season == "undefined") return "";
+              return d.Season;
+              });
+
+          var SeasonGroup   = Season.group().reduceSum(function(d) {   return 1; });
+            console.log(SeasonGroup.all().length*pixels_per_row)
+
+          bar_Season
+            .width($('div.Season').width())
+            .height(SeasonGroup.all().length*pixels_per_row+50)
+            .gap(1)
+            .margins({top: 0, right: 0, bottom: 50, left: 10})
+            .x(d3.scale.ordinal())
+            .labelOffsetX(5)
+              .label(function (d) {
+                if (d.key==""){
+                return '(' + d.value + ')  N/A'}
+                else {
+                return '(' + d.value + ')  ' + toTitleCase(d.key)}
+                        })
+
+            .ordering(function(kv) { return -kv.value; })
+            .elasticX(true)
+            .dimension(Season)
+            .group(SeasonGroup);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    function facility_card(d){
+            var card_text = "";
+            var div_row_start ='<div class="row">';
+            var div_row_end = '</div>';
+            var div_L_start ='<div class="col-md-7">';
+            var div_L_end = '</div>';
+            var div_R_start ='<div class="col-md-5">';
+            var div_R_end = '</div>';
+
+            var title = '<h2 style="font-size:14px;min-height:20px;">'+toTitleCase(d.name_of_laboratory)+'</h2>';
+            var subtitle = '<h2 style="font-size:12px;min-height:10px;margin-top:-5px;margin-bottom:5px">'+toTitleCase(d.down)+', '+toTitleCase(d.region)+'</h2>';
+            var inst_head = '<h2 style="font-size:12px;min-height:10px;margin-top:5px;margin-bottom:5px">Inst. Head: '+toTitleCase(d.institute_head)+'</h2>';
+            var lab_head = '<h2 style="font-size:12px;min-height:10px;margin-top:5px;margin-bottom:15px">Lab Head: '+toTitleCase(d.lab_head)+'</h2>';
+
+            function latlng(d){if(d.latitude){return '('+d.latitude.slice(0,7)+', '+d.longitude.slice(0,7)+')' }return ""}
+            var location = '<h2 style="font-size:14px;text-align:left">Facility</h2>' +
+                '<p style="font-size:12px;text-align:left;margin-top:-5px;min-height:60px;">' +
+                '<b>Aff</b>:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'+d.Opponent.toUpperCase()+'<br>' +
+                '<b>Type</b>:&nbsp;&nbsp;'+toTitleCase(d.Season)+'<br>' +
+                '<b>Loc</b>:&emsp;'+latlng(d)+'<br>' +
+                '<b>Staff</b>:&emsp;'+d.total_staff+'<br>' +
+                '<b>Patients/day</b>:&emsp;'+d.patients_per_day+'<br>' +
+                '</p>';
+
+            var amenities = '<h2 style="font-size:14px;text-align:left">Features</h2>' +
+                '<p style="font-size:12px;text-align:left;margin-top:-5px;min-height:60px;">';
+            var amenity_list=['phone','fax','computer','internet','electricity'];
+            amenity_list.forEach(function(a){if (d[a]==1){amenities+=toTitleCase(a)+'<br>'}});
+            amenities +='</p>';
+
+            var rapid_tests = '<h2 style="font-size:14px;text-align:left">Rapid Tests</h2>' +
+                '<p style="font-size:12px;text-align:left;margin-top:-5px;min-height:50px;">';
+            var test_list=['tdf_palu','tdr_hiv','widal','hb_sahli'];
+            test_list.forEach(function(a){if (d[a]==1){rapid_tests+=toTitleCase(a.replace("_"," "))+'<br>'}});
+            rapid_tests +='</p>';
+
+            var all_tests = '<h2 style="font-size:14px;text-align:left">List of Exams</h2>' +
+                '<p style="font-size:12px;text-align:left;margin-top:-5px;min-height:50px;">'+d.list_of_all_exams+'</p>';
+
+
+            var training_needs = '<h2 style="font-size:14px;text-align:left">Training Needs</h2>' +
+                '<p style="font-size:12px;text-align:left;margin-top:-5px;min-height:50px;">';
+            if (d.training){
+                d.training.forEach(function(a){if (a!='nan'){training_needs+=toTitleCase(a)+'<br>'}});
+            }
+            training_needs +='</p>';
+
+            card_text = div_row_start+title+subtitle+inst_head+lab_head+
+                div_L_start+location+training_needs+div_L_end+div_R_start+ amenities+rapid_tests+div_R_end+ div_row_end+
+                div_row_start+all_tests+div_row_end;
+            return card_text
+        }
+
+
+
+
+    dc.dataCount(".dc-data-count")
+        .dimension(ndx)
+        .group(all)
+
+    dc.dataCount(".dc-data-count2")
+        .dimension(ndx)
+        .group(yardsGrouping)
+
+    dc.renderAll();
+
+};
+
+    </script>
+
+
+
+
+    <div id="arl2017list">
+        <div class="container-fluid">
+            <div class="row" style="text-align:center;padding-bottom:25px; background-color:darkgray ">
+                <h2 class="text-center">Title Place_holder: Place_holder2</h2>
+                <h4 class="text-center" style="font-weight:normal">Place_holder3</h4>
+            </div>
+            <div class="row">
+                            <div class="Season col-sm-1"  style="height:200px;overflow: auto">
+                                <h4>Season</h4>
+                            </div>
+                            <div class="Opponent col-sm-2" style="height:200px;overflow: auto">
+                                <h4>Opponent</h4>
+                            </div>
+                            <div class="Poss col-sm-1" style="height:200px;overflow: auto">
+                                <h4>Poss</h4>
+                            </div>
+                            <div class="quarter col-sm-2" style="height:200px;overflow: auto">
+                                <h4>Quarter</h4>
+                            </div>
+                            <div class="down col-sm-2"  style="height:200px;overflow: auto">
+                                <h4>Down</h4>
+                            </div>
+                            <div class="distance col-sm-2"  style="height:200px;overflow: auto">
+                                <h4>Distance</h4>
+                            </div>
+                            <div class="Diff_Score col-sm-2"  style="height:200px;overflow: auto">
+                                <h4>Point Differential</h4>
+                            </div>
+
+            </div>
+            <div class="row">
+                            <div class="Play_Type col-sm-2"  style="height:200px;overflow: auto">
+                                <h4>Play Type</h4>
+                            </div>
+                            <div class="Passer col-sm-2" style="height:200px;overflow: auto">
+                                <h4>Passer</h4>
+                            </div>
+                            <div class="Targeted col-sm-2"  style="height:200px;overflow: auto">
+                                <h4>Target</h4>
+                            </div>
+                            <div class="Carrier col-sm-2"  style="height:200px;overflow: auto">
+                                <h4>Rusher</h4>
+                            </div>
+
+            </div>
+            <div class="row">
+                            <div class="yardDimension col-lg-10"  style="height:200px;overflow: auto">
+                                <h4>Yards</h4>
+                            </div>
+
+            </div>
+            <div class="row">
+
+                <div class="col-md-3">
+                        <div class="col-md-12 dc-data-count2"  style="clear:both">
+                            <h3>Tracking <span class="total-count"></span> Medical Facilities</h3>
+                            <div class="dc-data-count2 col-lg-12" >
+                                <span class="filter-count"></span> Plays Selected | <a
+                                href="javascript:dc.filterAll();dc.renderAll();">Reset All</a>
+                            </div>
+                        </div>
+                    <div class="col-md-12">
+                        <div class="col-lg-12" style="padding-top:25px;">
+                            <h4>Place_Holder button1</h4>
+                            <form>
+                                <label class="checkbox-inline">
+                                  <input id="phone" type="checkbox" value="Phone" class="checkbox"> Phone&nbsp;&nbsp;
+                                </label>
+                                <label class="checkbox-inline">
+                                  <input id="fax" type="checkbox" value="Fax" class="checkbox"> Fax&nbsp;&nbsp;
+                                </label>
+                                <label class="checkbox-inline">
+                                  <input id="computer" type="checkbox" value="Computer" class="checkbox"> Computer&nbsp;&nbsp;
+                                </label>
+                                <label class="checkbox-inline">
+                                  <input id="internet" type="checkbox" value="Internet" class="checkbox"> Internet&nbsp;&nbsp;
+                                </label>
+                                <label class="checkbox-inline">
+                                  <input id="electricity_existence" type="checkbox" value="Electricity" class="checkbox"> Electricity&nbsp;&nbsp;
+                                </label>
+                              </form>
+                        </div>
+                        <div class="col-lg-12">
+                            <h4>Place_Holder button 2</h4>
+                            <form >
+                                <label class="checkbox-inline">
+                                  <input id="tdr_palu" type="checkbox" value="TDR_Palu" class="checkbox">TDR Palu&nbsp;&nbsp;
+                                </label>
+                                <label class="checkbox-inline">
+                                  <input id="tdr_hiv" type="checkbox" value="TDR_HIV" class="checkbox">TDR HIV&nbsp;&nbsp;
+                                </label>
+                                <label class="checkbox-inline">
+                                  <input id="widal" type="checkbox" value="Widal" class="checkbox">Widal&nbsp;&nbsp;
+                                </label>
+                                <label class="checkbox-inline">
+                                  <input id="hb_sahli" type="checkbox" value="Hb_Sahli" class="checkbox">HB Sahli&nbsp;&nbsp;
+                                </label>
+                              </form>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12" style="padding-top:25px;">
+
+
+                        <div class="training col-lg-6" style="height:400px;overflow: auto">
+                            <h4>Bar chart left upper</h4>
+                        </div>
+                        <div class="Season col-lg-6"  style="height:225px;overflow: auto">
+                            <h4>Sector</h4>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="dc-data-grid col-lg-12" style="overflow: auto;height:600px;" id="right1a" >
+                        <h4>Facility Report</h4>
+                    </div>
+                </div>
+        </div>
+    </div>
+
+    <script>
+    $(function() {
+                d3.csv("http://localhost:8000/guinea_healthcare_table_cleaned_edit13.csv", function(d) {return d;}
+          ,function(error, rows) {
+          grid ("#arl2017list",rows);
+          });
+        });
+    </script>
+        <!--<script src="data/dcjs_example/jquery_1.11.min.js"></script>
+        <script src="data/bootstrap/js/bootstrap.min.js"></script>-->
+
+        <script src="data/dcjs_example/jquery_1.11.min.js"></script>
+        <script src="data/bootstrap_4.0/js/bootstrap.min.js"></script>
+        <script src="data/dcjs_example/jquery.lazyload.js"></script>
+</body>
+</html>

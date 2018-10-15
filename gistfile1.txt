@@ -1,0 +1,211 @@
+import re, csv
+import sys
+import json
+import time
+import string
+import requests
+import unicodedata
+import urllib3
+import numpy as np
+import pandas as pd
+import itertools
+
+from bs4 import BeautifulSoup
+
+#           2017 Akron       Pitt       GSU         Iowa       IU         NW        UM          OSU       MSU (400935399)     2016 KSU      Pitt        Temple      UM        Minny       Mary        OSU     Purdue     Iowa         IU      Rutgers      MSU        Wisc      USC
+game_id_list = [400935237, 400935245, 400935356, 400935360, 400935368, 400935374, 400935386, 400935394, 400869261,
+                400869436, 400869519, 400869658, 400869666, 400869669, 400869645, 400869682, 400869688, 400869689,
+                400869641, 400869702, 400926946, 400876111]
+
+#game_id_list = [400935360]
+
+zipcode = '16802'
+team = 'PSU'
+team_logo_id = '213'
+
+#game_id_list = [400935238, 400935239, 400933860, 400935364, 400935376, 400935382, 400935387, 400935395]
+#zipcode = '47907'
+#team = 'PUR'
+#team_logo_id = '2509'
+
+
+game_num = 0
+for gameid in game_id_list:
+    game_array = np.empty((300, 30), 'object')
+    print('Getting gameid=%s' % gameid)
+    r = requests.get('http://www.espn.com/college-football/playbyplay?gameId=%s' % gameid)
+    r2 = requests.get('http://www.espn.com/college-football/game?gameId=%s' % gameid)
+    soup = BeautifulSoup(r.text, 'html.parser')
+    soup2 = BeautifulSoup(r2.text, 'html.parser')
+
+    date = soup2.find_all('span', {'class': 'timestamp'})[0].get_text()
+    year = re.split('/', date)[2]
+    month = re.split('/', date)[0]
+    if int(month) < 5:
+        season = int(year) - 1
+    else:
+        season = year
+    loc = re.sub('\s+', ' ',
+                 soup2.find_all('li', {'class': 'icon-font-before icon-location-solid-before'})[0].get_text())
+    #check attend
+    chk_att = soup2.find('div', {'class': 'game-info-note capacity'})
+    if chk_att is not None:
+        attend = re.split(':', soup2.find('div', {'class': 'game-info-note capacity'}).get_text())[1]
+    else:
+        attend = 'not given'
+    bet = re.split(' ', re.sub('\s+', ' ', soup2.find_all('div', {'class': 'odds-details'})[
+        0].get_text()))  # 2 - team name, 3 #, 5 #
+
+    plays_drives = soup.find_all('ul', {'class': 'drive-list'})
+    drive_details = soup.find_all('div', {'class': 'left'})
+    score_details = soup.find_all('div', {'class': 'right'})
+
+    ind = 0
+    name_temp = []
+    score_temp = []
+    hold_temp = []
+    for drive, play, score in itertools.zip_longest(drive_details, plays_drives, score_details):
+        post_play_text = play.find_all('span', {'class': 'post-play'})
+        down_dist_text = play.find_all('h3')
+        details = re.split(',| ', drive.find('span', {
+            'class': 'drive-details'}).get_text())  # list with len 7, #, plays, space, #, yards, space, time
+        result = drive.find('span', {'class': 'headline'}).get_text()  # drive result text
+        team_names = score.find_all('span', {'class': 'team-name'})
+        team_scores = score.find_all('span', {'class': 'team-score'})
+        for el_names, el_scores in itertools.zip_longest(team_names, team_scores):
+            name_temp.append(el_names.get_text())
+            hold_temp.append(el_names.get_text())
+            score_temp.append(el_scores.get_text())
+
+        drive_logo = drive.find('img')['src']  # link of thumbnail, psu contains 213
+        if team_logo_id in drive_logo:
+            poss = team
+        else:
+            hold_temp.remove(team)
+            poss = hold_temp[0]
+
+        for el_play, el_dist in itertools.zip_longest(post_play_text, down_dist_text):
+            if ' at ' not in el_dist.get_text():
+                game_array[ind][0:4] = [el_dist.get_text(), '', '', '']
+            else:
+                game_array[ind][0:4] = [el_dist.get_text()] + re.split('and|at', el_dist.get_text())
+
+            game_array[ind][4] = poss
+
+            if name_temp[0] == team:
+                game_array[ind][7] = score_temp[0]
+                game_array[ind][8] = score_temp[1]
+                game_array[ind][9] = int(score_temp[0]) - int(score_temp[1])
+            else:
+                game_array[ind][7] = score_temp[1]
+                game_array[ind][8] = score_temp[0]
+                game_array[ind][9] = int(score_temp[1]) - int(score_temp[0])
+
+            tempt = re.sub('\s+', ' ', el_play.get_text())
+
+            game_array[ind][10] = tempt
+
+            if 'End of' in tempt:
+                pass
+            else:
+                if 'OT' in tempt[tempt.find("(") + 1:tempt.find(")")].split('-')[0]:
+                    game_array[ind][6] = 'untimed'
+                    game_array[ind][5] = tempt[tempt.find("(") + 1:tempt.find(")")].split('-')[0]
+                else:
+                    game_array[ind][6] = tempt[tempt.find("(") + 1:tempt.find(")")].split('-')[0]
+                    game_array[ind][5] = tempt[tempt.find("(") + 1:tempt.find(")")].split('-')[1]
+                # check run [run, 11:21, pass,passer, comp, tar, run, ball, punt, fg, koreturn, penalty]
+                if ' run ' in tempt:
+                    temp_run = tempt[tempt.find(")") + 1:tempt.find("run")]
+                    game_array[ind][12:22] = [0, 0, 0, 0, 1, temp_run, 0, 0, 0, 0]
+                elif ' Yd Run ' in tempt:
+                    temp_run = tempt[0:tempt.find(" Yd Run")-2]
+                    game_array[ind][12:22] = [0, 0, 0, 0, 1, temp_run, 0, 0, 0, 0]
+
+                # check pass [run, 11:21, pass,passer, comp, tar, run, ball, punt, fg, koreturn, penalty]
+                if ' pass ' in tempt:
+                    passer_temp = tempt[tempt.find(")") + 1:tempt.find(" pass ")]
+                    if 'incomplete' in tempt or 'Incomplete' in tempt:
+                        if 'incomplete to' in tempt:
+                            temp_pass = tempt[tempt.find("incomplete to") + 13:len(tempt)]
+                            game_array[ind][12:22] = [1, passer_temp, 0, temp_pass, 0, 0, 0, 0, 0, 0]
+                        else:
+                            game_array[ind][12:22] = [1, passer_temp, 0, 0, 0, 0, 0, 0, 0, 0]
+
+                    elif 'cept' in tempt or 'CEPT' in tempt:
+                        game_array[ind][12:22] = [1, passer_temp, 'interception', 0, 0, 0, 0, 0, 0, 0]
+                    #Yd pass from
+                    else:
+                        if 'Yd pass' in tempt:
+                            temp_pass = tempt[tempt.find(")") + 1:tempt.find("Yd pass")-3]
+                            passer_temp = tempt[tempt.find("Yd pass")+13:tempt.rfind("(") - 1]
+                        else:
+                            temp_pass = tempt[tempt.find("complete to") + 11:tempt.find("for")]
+                        game_array[ind][12:22] = [1, passer_temp, 1, temp_pass, 0, 0, 0, 0, 0, 0]
+
+                # check punt [run, 11:21, pass,passer, comp, tar, run, ball, punt, fg, koreturn, penalty]
+                if 'punt' in tempt:
+                    game_array[ind][12:22] = [0, 0, 0, 0, 0, 0, 1, 0, 0, 0]
+
+                # check field goal [run, 11:21, pass,passer, comp, tar, run, ball, punt, fg, koreturn, penalty]
+                if 'Field Goal' in tempt or 'FG' in tempt:
+                    game_array[ind][12:22] = [0, 0, 0, 0, 0, 0, 0, 1, 0, 0]
+
+                # check kickoff [run, 11:21, pass,passer, comp, tar, run, ball, punt, fg, koreturn, penalty]
+                if 'Kickoff Return' in tempt:
+                    game_array[ind][12:22] = [0, 0, 0, 0, 0, 0, 0, 0, 1, 0]
+
+                # check penalty [run, 11:21, pass,passer, comp, tar, run, ball, punt, fg, koreturn, penalty]
+                if 'Penalty' in tempt or 'PENALTY' in tempt:
+                    game_array[ind][12:22] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 1]
+
+                # check yardages ' loss of 2 yards ', 'for 1 yd', 'for no gain', 'for 3 yds'
+                if 'loss of' in tempt and 'yard' in tempt:
+                    game_array[ind][11] = int(tempt[tempt.find("loss of") + 8:tempt.find(" yard")])*-1
+                elif 'for' in tempt and 'yd' in tempt:
+                    game_array[ind][11] = tempt[tempt.find("for") + 4:tempt.find(" yd")]
+                elif 'for no gain' in tempt or 'ncomplete' in tempt:
+                    game_array[ind][11] = '0'
+                elif 'Yd Run' in tempt:
+                    game_array[ind][11] = tempt[tempt.find("Yd Run") - 3:tempt.find("Yd Run")]
+                else:
+                    game_array[ind][11] = ''
+
+                game_array[ind][4] = poss
+                game_array[ind][22] = date
+                game_array[ind][23] = season
+                game_array[ind][24] = loc
+                if zipcode in loc:
+                    game_array[ind][25] = 'home'
+                else:
+                    game_array[ind][25] = 'road'
+                game_array[ind][26] = bet[2] + bet[3]
+                game_array[ind][27] = bet[5]
+                game_array[ind][28] = attend
+                game_array[ind][29] = gameid
+
+            ind += 1
+
+        name_temp = []
+        score_temp = []
+        hold_temp = []
+
+    game_frame = pd.DataFrame(game_array,
+                              columns=['Down and Distance text from ESPN', 'Down', 'Distance', 'Yardline', 'Poss',
+                                       'Quarter', 'Time', 'Team Score',
+                                       'Opp Score', 'Diff Score', 'Post Play Text from ESPN', 'Yards', 'Pass: Yes=1, No=0','Passer',
+                                       'Completed?: Yes=1, No=0', 'Targeted', 'Run: Yes=1, No=0',
+                                       'Ball Carrier', 'Punt: Yes=1, No=0', 'Field Goal: Yes=1, No=0',
+                                       'Kickoff Return: Yes=1, No=0', 'Penalty: Yes=1, No=0',
+                                       'Date', 'Season', 'Location', 'Home/Away', 'line', 'over/under',
+                                       'Attendance', 'Gameid'])
+    game_frame.dropna(inplace=True, how='all')
+    csvfilename = 'ppgameid%s.csv' % gameid
+    game_frame.to_csv(csvfilename)
+    if game_num == 0:
+        game_frame.to_csv('master.csv', mode='a')
+    else:
+        game_frame.to_csv('master.csv', header=None, mode='a')
+    game_num += 1
+print('Fetched game data successfully')
+
